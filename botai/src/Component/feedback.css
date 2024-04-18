@@ -1,11 +1,9 @@
 .feedback-section {
   width: 766px;
-  /* height: 335px; */
   border: 1px solid #00000073;
   border: 1px 0px 0px 0px;
   max-height: calc(100vh - 100px); /* Adjust maximum height as needed */
   overflow-y: auto;
-  opacity: 1;
   box-shadow: -4px 4px 7px 0px #00000040;
   position: absolute;
   top: 50px; /* Position from the top */
@@ -19,16 +17,13 @@
 .textarea {
   width: 716px;
   height: 187px;
-  gap: 0px;
   border-radius: 10px;
   border: 1px 0px 0px 0px;
-  opacity: 0px;
 }
 .submitbtn {
   width: 130px;
   height: 50px;
   border-radius: 5px 0px 0px 0px;
-  opacity: 0px;
   margin-left: auto;
 }
 .feedback {
@@ -42,7 +37,6 @@
 }
 .conversation-container {
   width: 1100px;
-  /* height: auto; */
   background: #d7c7f421;
   border-radius: 20px 0px 0px 0px;
   padding: 30px;
@@ -118,16 +112,14 @@
 .textarea {
   width: 716px;
   height: 187px;
-  gap: 0px;
   border-radius: 10px;
   border: 1px 0px 0px 0px;
-  opacity: 0px;
+
 }
 .submitbtn {
   width: 130px;
   height: 50px;
   border-radius: 5px 0px 0px 0px;
-  opacity: 0px;
   margin-left: auto;
 }
 .feedback {
@@ -179,7 +171,7 @@
 }
 .data {
   display: flex;
-  /* flex-direction: column; */
+  
 }
 .active{
   margin-right: 900px;
