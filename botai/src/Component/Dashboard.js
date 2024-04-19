@@ -10,7 +10,7 @@ function Dashboard() {
   const [message, setMessage] = useState("");
   const [conversation, setConversation] = useState([]);
   const [showConversation, setShowConversation] = useState(false);
-  const [feedbackData, setFeedbackData] = useState({ feedback: "", rating: 0 });
+  
   const navigate = useNavigate();
 
   
@@ -29,16 +29,13 @@ function Dashboard() {
     const userMessage = `You: ${message}`;
     const newConversation = [...conversation, userMessage, `Bot AI: ${aiResponse}`];
     setConversation(newConversation);
+
+    // Save conversation data to local storage after each message
+  localStorage.setItem("conversation", JSON.stringify(newConversation));
   };
   
 
-  const handleSaveFeedback = (feedback) => {
-    // Save feedback data to local storage
-    localStorage.setItem("feedbackData", JSON.stringify(feedback));
-    console.log(feedback);
-    setFeedbackData(feedback);
-    
-  };
+ 
   const updateConversation = (updatedConversation) => {
     setConversation(updatedConversation);
   };
@@ -91,7 +88,7 @@ function Dashboard() {
         </div>
         </div>
         </>
-      ):( <ConversationPage conversation={conversation} onSaveFeedback={handleSaveFeedback}
+      ):( <ConversationPage conversation={conversation} 
         onUpdateConversation={updateConversation}
       />)}
         <form

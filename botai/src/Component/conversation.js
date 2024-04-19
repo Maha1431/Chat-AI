@@ -7,69 +7,37 @@ import light from "../assests/image 34.png";
 import Avatar from "@mui/material/Avatar";
 import icon from "../assests/image 29.png";
 import Card from "@mui/material/Card";
+import { CardContent } from "@mui/material";
 
-function ConversationPage({ conversation, onSaveFeedback,  onUpdateConversation  }) {
+function ConversationPage({ conversation, onUpdateConversation }) {
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
   const [showFeedbackSection, setShowFeedbackSection] = useState(false);
   const [showRatingBar, setShowRatingBar] = useState(false);
-  
- 
+  const [storedFeedback, setStoredFeedback] = useState("");
+  const [storedRating, setStoredRating] = useState(0);
+
   const handleFeedbackChange = (e) => {
     setFeedback(e.target.value);
   };
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
+    // Save rating value to local storage
+    localStorage.setItem("rating", newValue.toString());
+    setStoredRating(newValue);
   };
 
-   // Load rating from local storage when component mounts
-   useEffect(() => {
-    const savedRating = localStorage.getItem("rating");
-    if (savedRating) {
-      setRating(parseInt(savedRating));
-    }
-  }, []);
-  const handleSubmitFeedback = () => {
   
-   onSaveFeedback(feedback, rating);
- // Construct the updated conversation array with feedback appended to the last bot message
- const updatedConversation = conversation.map((item, index) => {
-  if (
-    typeof item === "string" && // Check if item is a string
-    item.startsWith("Bot AI") // Check if the string starts with "Bot AI"
-  ) {
-    // Append feedback to the last Bot AI message
-    return (
-     
-       `${item} Feedback: ${feedback} Rating: ${rating}`   
-    )
-  }
-  return item;
-});
-console.log(updatedConversation);
 
-    // Combine conversation and feedback data
-    const dataToSave = {
-      conversation: conversation,
-      feedback: feedback,
-      rating: rating,
-    };
-    
-    // Save data to local storage
-    localStorage.setItem("conversation", JSON.stringify(dataToSave));
-// Pass the updated conversation to the parent component
-onUpdateConversation(updatedConversation);
-
-
+  const handleSubmitFeedback = () => {
+    localStorage.setItem("feedback", feedback);
+    setStoredFeedback(feedback);
     setFeedback("");
-    setRating(0);
+    // setRating(0);
     setShowFeedbackSection(false);
     setShowRatingBar(false);
-    
   };
-   
-  
 
   const handleThumbsUpClick = (index) => {
     setShowRatingBar(true);
@@ -85,7 +53,6 @@ onUpdateConversation(updatedConversation);
     setShowFeedbackSection(false);
   };
 
- 
   const getCurrentTime = () => {
     const now = new Date();
     let hours = now.getHours();
@@ -102,7 +69,7 @@ onUpdateConversation(updatedConversation);
       <div className="conversation-container">
         {conversation.map((item, index) => (
           <div key={index} className="message-container">
-             {typeof item === "string" && item.startsWith("You")   ? (
+            {typeof item === "string" && item.startsWith("You") ? (
               <Card className="user-message">
                 <Avatar
                   alt="Travis Howard"
@@ -117,10 +84,11 @@ onUpdateConversation(updatedConversation);
             ) : (
               <Card className="bot-message">
                 <img src={icon} alt="icon" className="icon1" />
-                <div className="data">
+                <div className="data1">
                   <p>{item}</p>
-                  <span className="active">{getCurrentTime()}
-                  
+                  <span className="active">
+                    {getCurrentTime()}
+
                     <ThumbUpIcon
                       onClick={handleThumbsUpClick}
                       style={{ cursor: "pointer" }}
@@ -131,7 +99,7 @@ onUpdateConversation(updatedConversation);
                     />
                   </span>
                 
-                  { showRatingBar && (
+                  {showRatingBar && (
                     <div className="rating-bar">
                       <p>Rate this Response:{rating}</p>
                       <Rating
@@ -143,14 +111,27 @@ onUpdateConversation(updatedConversation);
                       />
                     </div>
                   )}
-                </div>
-            
+                
+                <div className="details-fr">
+                {storedFeedback && (
+        
+          <p>Feedback: {storedFeedback}</p>
+        
+      )}
+
+      {storedRating > 0 && (
+        <div className="stored-rating">
+          <p>Rating: {storedRating}</p>
+        </div>
+      )}
+      </div>
+      </div>
               </Card>
             )}
           </div>
         ))}
       </div>
-
+       
       {showFeedbackSection && (
         <div className="feedback-section">
           <div className="feedback">
@@ -170,6 +151,8 @@ onUpdateConversation(updatedConversation);
           </button>
         </div>
       )}
+       
+      
     </div>
   );
 }
