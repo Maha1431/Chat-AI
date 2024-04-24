@@ -6,7 +6,7 @@ import "./interface.css";
 import ConversationPage from "./conversation";
 import {useNavigate} from 'react-router-dom'
 
-function Dashboard() {
+function Dashboard({}) {
   const [message, setMessage] = useState("");
   const [conversation, setConversation] = useState([]);
   const [showConversation, setShowConversation] = useState(false);
@@ -29,16 +29,14 @@ function Dashboard() {
     const userMessage = `You: ${message}`;
     const newConversation = [...conversation, userMessage, `Bot AI: ${aiResponse}`];
     setConversation(newConversation);
-
-    // Save conversation data to local storage after each message
-  localStorage.setItem("conversation", JSON.stringify(newConversation));
+   // Storing conversation array as a string
+localStorage.setItem("conversation", JSON.stringify(newConversation));
   };
   
-
- 
-  const updateConversation = (updatedConversation) => {
-    setConversation(updatedConversation);
-  };
+const handleSavebutton =(feedback, rating) => {
+   
+}
+  
  
  
   const handleclick =() => {
@@ -88,8 +86,7 @@ function Dashboard() {
         </div>
         </div>
         </>
-      ):( <ConversationPage conversation={conversation} 
-        onUpdateConversation={updateConversation}
+      ):( <ConversationPage conversation={conversation}
       />)}
         <form
           className="message-input"
@@ -105,7 +102,7 @@ function Dashboard() {
            className='inputbox'
           />
           <button type="submit"  className="ask">Ask</button>
-          <button className="save" >Save</button>
+          <button className="save"  onClick={handleSavebutton}>Save</button>
         </form>
         
        

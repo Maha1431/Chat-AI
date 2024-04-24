@@ -9,17 +9,21 @@ import Rating from "@mui/material/Rating";
 
 function ConversationHistory() {
   const [conversation, setConversation] = useState([]);
-  const [feedback, setFeedback] = useState("");
-  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState([]);
+  const [rating, setRating] = useState([]);
 
  
-
-useEffect(() => {
+  useEffect(() => {
     const storedConversation = JSON.parse(localStorage.getItem("conversation")) || [];
-    setConversation(storedConversation.conversation || []);
-    setFeedback(storedConversation.feedback ||  "");
-    setRating(storedConversation.rating || 0);
+    const storedFeedback = JSON.parse(localStorage.getItem("Feedbackarr")) || [];
+    const storedRating = JSON.parse(localStorage.getItem("Ratingarr")) || [];
+  
+    // Assuming conversation, feedback, and rating are arrays stored in localStorage
+    setConversation(storedConversation);
+    setFeedback(storedFeedback);
+    setRating(storedRating);
   }, []);
+
 
 
 
@@ -64,15 +68,15 @@ useEffect(() => {
                     
                       <p>
                         <strong>Feedback:</strong> 
-                        <span>{feedback}</span>
+                        <span>{feedback[index]}</span>
                         </p>
 
                     
                       <div className="rating-bar">
-                        <p>Rate this Response: {rating}</p>
+                        <p>Rate this Response: {rating[index]}</p>
                         <Rating
                           name="conversation-rating"
-                          value={rating}
+                          value={rating[index]}
                           readOnly
                         />
                       </div>

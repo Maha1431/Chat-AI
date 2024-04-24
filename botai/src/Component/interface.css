@@ -17,6 +17,7 @@ border-radius: 20px;
     width: 1280px;
 height: auto;
 background: linear-gradient(180deg, rgba(173, 152, 211, 0.2) 0%, rgba(151, 133, 186, 0.2) 100%);
+padding: 30px;
 }
 .chat{
     width: 24px;

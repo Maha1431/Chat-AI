@@ -9,44 +9,73 @@ import icon from "../assests/image 29.png";
 import Card from "@mui/material/Card";
 import { CardContent } from "@mui/material";
 
-function ConversationPage({ conversation, onUpdateConversation }) {
+function ConversationPage({ conversation, onsaveButton }) {
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
   const [showFeedbackSection, setShowFeedbackSection] = useState(false);
   const [showRatingBar, setShowRatingBar] = useState(false);
-  const [storedFeedback, setStoredFeedback] = useState("");
-  const [storedRating, setStoredRating] = useState(0);
+  const [selectedConversationIndex, setSelectedConversationIndex] = useState(
+    null
+  );
+  const [conversationsFeedback, setConversationsFeedback] = useState([]);
+  const [conversationsRating, setConversationsRating] = useState([]);
+
+
+
+
+  useEffect(() => {
+    // Initialize feedback and rating arrays from localStorage, or set to empty arrays if no data is available
+    const storedFeedback = JSON.parse(localStorage.getItem("Feedbackarr")) || [];
+    const storedRating = JSON.parse(localStorage.getItem("Ratingarr")) || [];
+    setConversationsFeedback(storedFeedback);
+    setConversationsRating(storedRating);
+  }, []);
+
 
   const handleFeedbackChange = (e) => {
     setFeedback(e.target.value);
   };
 
-  const handleRatingChange = (newValue) => {
+
+
+  const handleRatingChange = (newValue, index) => {
     setRating(newValue);
-    // Save rating value to local storage
-    localStorage.setItem("rating", newValue.toString());
-    setStoredRating(newValue);
+    // Create a copy of the existing ratings array
+    const updatedRatings = [...conversationsRating];
+    // Update the rating value at the specified index
+    updatedRatings[index] = newValue;
+    // Set the updated ratings array in state
+    setConversationsRating(updatedRatings);
+    // Filter out null values and store the updated ratings array in localStorage
+    const filteredRatings = updatedRatings.filter(value => value !== null);
+    localStorage.setItem("Ratingarr", JSON.stringify(filteredRatings));
   };
 
-  
-
   const handleSubmitFeedback = () => {
-    localStorage.setItem("feedback", feedback);
-    setStoredFeedback(feedback);
-    setFeedback("");
-    // setRating(0);
-    setShowFeedbackSection(false);
-    setShowRatingBar(false);
+    if (selectedConversationIndex !== null) {
+      const updatedFeedback = [...conversationsFeedback];
+      updatedFeedback[selectedConversationIndex] = feedback;
+      setConversationsFeedback(updatedFeedback);
+     
+
+      // Filter out null values and store the updated feedback array in localStorage
+      const filteredFeedback = updatedFeedback.filter(value => value !== null);
+      localStorage.setItem("Feedbackarr", JSON.stringify(filteredFeedback));
+      setFeedback("");
+      setShowFeedbackSection(false);
+    }
   };
 
   const handleThumbsUpClick = (index) => {
     setShowRatingBar(true);
     setShowFeedbackSection(false);
+    setSelectedConversationIndex(index);
   };
 
-  const handleThumbsDownClick = () => {
+  const handleThumbsDownClick = (index) => {
     setShowFeedbackSection(true);
     setShowRatingBar(false);
+    setSelectedConversationIndex(index);
   };
 
   const handleCloseFeedback = () => {
@@ -64,6 +93,7 @@ function ConversationPage({ conversation, onUpdateConversation }) {
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes; // Add leading zero for single-digit minutes
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
   };
+
   return (
     <div className="chatbox">
       <div className="conversation-container">
@@ -88,50 +118,54 @@ function ConversationPage({ conversation, onUpdateConversation }) {
                   <p>{item}</p>
                   <span className="active">
                     {getCurrentTime()}
-
                     <ThumbUpIcon
-                      onClick={handleThumbsUpClick}
+                      onClick={() => handleThumbsUpClick(index)}
                       style={{ cursor: "pointer" }}
                     />
                     <ThumbDownIcon
-                      onClick={handleThumbsDownClick}
+                      onClick={() => handleThumbsDownClick(index)}
                       style={{ cursor: "pointer" }}
                     />
                   </span>
-                
-                  {showRatingBar && (
+
+                  {showRatingBar  && selectedConversationIndex === index && (
                     <div className="rating-bar">
                       <p>Rate this Response:{rating}</p>
                       <Rating
                         name="conversation-rating"
                         value={rating}
                         onChange={(event, newValue) => {
-                          handleRatingChange(newValue);
+                          handleRatingChange(newValue, index);
                         }}
                       />
                     </div>
                   )}
-                
-                <div className="details-fr">
-                {storedFeedback && (
-        
-          <p>Feedback: {storedFeedback}</p>
-        
-      )}
 
-      {storedRating > 0 && (
-        <div className="stored-rating">
-          <p>Rating: {storedRating}</p>
-        </div>
-      )}
-      </div>
-      </div>
+                  
+                    {/* Display feedback and ratings */}
+                    {conversationsFeedback[index] && (
+                      <div>
+                        <p>Feedback: {conversationsFeedback[index]}</p>
+                      </div>
+                    )}
+                    {conversationsRating[index] && (
+                      <div>
+                        <p>Rating: {conversationsRating[index]}</p>
+                        <Rating
+                          name="conversation-rating"
+                          value={conversationsRating[index]}
+                          readOnly
+                        />
+                      </div>
+                    )}
+                  </div>
+                
               </Card>
             )}
           </div>
         ))}
       </div>
-       
+
       {showFeedbackSection && (
         <div className="feedback-section">
           <div className="feedback">
@@ -141,19 +175,21 @@ function ConversationPage({ conversation, onUpdateConversation }) {
           </div>
           <textarea
             rows="5"
-            cols="50"
+            cols="40"
             value={feedback}
             onChange={handleFeedbackChange}
             className="textarea"
           ></textarea>
-          <button onClick={handleSubmitFeedback} className="submitbtn">
+          <button
+            onClick={handleSubmitFeedback}
+            className="submitbtn"
+          >
             Submit{" "}
           </button>
         </div>
       )}
-       
-      
     </div>
   );
 }
+
 export default ConversationPage;
